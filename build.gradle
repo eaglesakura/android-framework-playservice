@@ -37,6 +37,8 @@ android {
     defaultConfig {
         minSdkVersion 15      // 現実的な対応ラインとしてAndroid 4.0.4とする
         targetSdkVersion 24
+        // Device Test
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"    // JUnit4
     }
 
     dataBinding {
@@ -88,6 +90,11 @@ dependencies {
      */
     compile "com.google.android.gms:play-services-auth:${ANDROID_PLAYSERVICE_LIB_VERSION}"
     compile 'com.android.support:support-annotations:+'
+
+    /**
+     * UnitTest用
+     */
+    androidTestCompile "com.google.android.gms:play-services-location:${ANDROID_PLAYSERVICE_LIB_VERSION}"
 }
 
 /**
