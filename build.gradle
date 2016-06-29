@@ -40,18 +40,6 @@ android {
         // Device Test
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"    // JUnit4
     }
-
-    dataBinding {
-        enabled = true
-    }
-
-    sourceSets {
-        main {
-            java.srcDirs = [
-                    "src/main/java", "src/main/generated/prop",
-            ]
-        }
-    }
 }
 
 // check env
@@ -59,7 +47,7 @@ if (!hasProperty("ANDROID_SUPPORT_LIB_VERSION")) {
     ext.ANDROID_SUPPORT_LIB_VERSION = "24.+"
 }
 if (!hasProperty("ANDROID_PLAYSERVICE_LIB_VERSION")) {
-    ext.ANDROID_PLAYSERVICE_LIB_VERSION = "9.2.0"
+    ext.ANDROID_PLAYSERVICE_LIB_VERSION = "+"
 }
 // Local or maven
 if (!hasProperty("EGLIBRARY_COMPILE_LOCAL")) {
