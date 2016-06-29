@@ -1,17 +1,53 @@
 package com.eaglesakura.android.framework.playservice.util;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Result;
+import com.google.android.gms.common.api.Status;
 
+import com.eaglesakura.android.framework.FwLog;
+import com.eaglesakura.android.framework.playservice.client.PlayServiceConnection;
+import com.eaglesakura.android.framework.playservice.error.PlayServiceException;
 import com.eaglesakura.android.rx.error.TaskCanceledException;
 import com.eaglesakura.lambda.CallbackUtils;
 import com.eaglesakura.lambda.CancelCallback;
 import com.eaglesakura.thread.Holder;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
+
+import java.io.IOException;
+
 /**
  * PlayService系のUtil
  */
 public class PlayServiceUtil {
+
+    /**
+     * ログインを行うためのIntentを発行する。
+     *
+     * 既にログイン済みの場合、アクセスを一旦revokeして再度ログインを促すようにする
+     *
+     * @param builder        ログイン対象のAPI
+     * @param cancelCallback キャンセルチェック
+     * @return ログイン用intent
+     */
+    @SuppressLint("NewApi")
+    public static Intent newSignInIntent(GoogleApiClient.Builder builder, CancelCallback cancelCallback) throws TaskCanceledException, PlayServiceException {
+        try (
+                PlayServiceConnection connection = PlayServiceConnection.newInstance(builder, cancelCallback)
+        ) {
+            GoogleApiClient client = connection.getClientIfSuccess();
+            Status revokeAccess = PlayServiceUtil.await(Auth.GoogleSignInApi.revokeAccess(client), cancelCallback);
+            FwLog.google("Revoke Access[%s]", revokeAccess.getStatus().toString());
+
+            return connection.newSignInIntent();
+        } catch (IOException e) {
+            throw new PlayServiceException(e);
+        }
+    }
+
     /**
      * キャンセルチェックを行ったうえで処理待ちを行う
      */
