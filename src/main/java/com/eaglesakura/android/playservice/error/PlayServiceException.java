@@ -1,4 +1,4 @@
-package com.eaglesakura.android.framework.playservice.error;
+package com.eaglesakura.android.playservice.error;
 
 public class PlayServiceException extends Exception {
 

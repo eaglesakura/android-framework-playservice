@@ -40,6 +40,10 @@ android {
         // Device Test
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"    // JUnit4
     }
+
+    lintOptions {
+        disable "NewApi"
+    }
 }
 
 // check env
@@ -67,7 +71,7 @@ dependencies {
         androidTestCompile project(":eglibrary:android-devicetest-support")
         testCompile project(":eglibrary:android-unittest-support")
     } else {
-        compile 'com.eaglesakura:android-framework:2.24.+'
+        compile 'com.eaglesakura:android-framework:2.+'
 
         androidTestCompile 'com.eaglesakura:android-devicetest-support:1.+'
         testCompile 'com.eaglesakura:android-unittest-support:1.+'

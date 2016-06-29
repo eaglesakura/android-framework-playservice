@@ -1,4 +1,4 @@
-package com.eaglesakura.android.framework.playservice.error;
+package com.eaglesakura.android.playservice.error;
 
 /**
  * 何らかの理由で接続が不完全になったため、リトライを要求する
