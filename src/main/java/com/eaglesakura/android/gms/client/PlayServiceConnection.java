@@ -1,14 +1,14 @@
-package com.eaglesakura.android.playservice.client;
+package com.eaglesakura.android.gms.client;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import com.eaglesakura.android.playservice.error.DeveloperImplementFailedException;
-import com.eaglesakura.android.playservice.error.PlayServiceConnectException;
-import com.eaglesakura.android.playservice.error.PlayServiceException;
-import com.eaglesakura.android.playservice.error.RequireRetryConnectException;
-import com.eaglesakura.android.playservice.error.SignInRequireException;
+import com.eaglesakura.android.gms.error.DeveloperImplementFailedException;
+import com.eaglesakura.android.gms.error.PlayServiceConnectException;
+import com.eaglesakura.android.gms.error.PlayServiceException;
+import com.eaglesakura.android.gms.error.RequireRetryConnectException;
+import com.eaglesakura.android.gms.error.SignInRequireException;
 import com.eaglesakura.android.rx.error.TaskCanceledException;
 import com.eaglesakura.lambda.CallbackUtils;
 import com.eaglesakura.lambda.CancelCallback;

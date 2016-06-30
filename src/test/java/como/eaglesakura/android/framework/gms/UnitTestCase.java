@@ -1,8 +1,8 @@
-package como.eaglesakura.android.framework.playservice;
+package como.eaglesakura.android.framework.gms;
 
 
 import com.eaglesakura.android.AndroidSupportTestCase;
-import com.eaglesakura.android.framework.BuildConfig;
+import com.eaglesakura.android.gms.BuildConfig;
 
 import org.junit.runner.RunWith;
 

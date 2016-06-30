@@ -1,4 +1,4 @@
-package como.eaglesakura.android.framework.playservice;
+package como.eaglesakura.android.framework.gms;
 
 import org.junit.Test;
 

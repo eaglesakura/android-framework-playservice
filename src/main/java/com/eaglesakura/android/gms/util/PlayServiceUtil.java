@@ -1,15 +1,13 @@
-package com.eaglesakura.android.playservice.util;
+package com.eaglesakura.android.gms.util;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Result;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.Task;
 
-import com.eaglesakura.android.framework.FwLog;
-import com.eaglesakura.android.playservice.client.PlayServiceConnection;
-import com.eaglesakura.android.playservice.error.PlayServiceException;
+import com.eaglesakura.android.gms.client.PlayServiceConnection;
+import com.eaglesakura.android.gms.error.PlayServiceException;
 import com.eaglesakura.android.rx.error.TaskCanceledException;
 import com.eaglesakura.lambda.CallbackUtils;
 import com.eaglesakura.lambda.CancelCallback;
@@ -40,8 +38,7 @@ public class PlayServiceUtil {
                 PlayServiceConnection connection = PlayServiceConnection.newInstance(builder, cancelCallback)
         ) {
             GoogleApiClient client = connection.getClientIfSuccess();
-            Status revokeAccess = PlayServiceUtil.await(Auth.GoogleSignInApi.revokeAccess(client), cancelCallback);
-            FwLog.google("Revoke Access[%s]", revokeAccess.getStatus().toString());
+            PlayServiceUtil.await(Auth.GoogleSignInApi.revokeAccess(client), cancelCallback);
 
             return connection.newSignInIntent();
         } catch (IOException e) {

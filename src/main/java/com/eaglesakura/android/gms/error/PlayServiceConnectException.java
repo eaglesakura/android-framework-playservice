@@ -1,4 +1,4 @@
-package com.eaglesakura.android.playservice.error;
+package com.eaglesakura.android.gms.error;
 
 import com.google.android.gms.common.ConnectionResult;
 

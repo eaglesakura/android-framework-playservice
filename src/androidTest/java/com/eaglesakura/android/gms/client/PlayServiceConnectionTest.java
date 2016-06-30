@@ -1,4 +1,4 @@
-package com.eaglesakura.android.playservice.client;
+package com.eaglesakura.android.gms.client;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
