@@ -6,14 +6,17 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.tasks.Task;
 
+import com.eaglesakura.android.error.NetworkNotConnectException;
 import com.eaglesakura.android.gms.client.PlayServiceConnection;
 import com.eaglesakura.android.gms.error.PlayServiceException;
 import com.eaglesakura.android.rx.error.TaskCanceledException;
+import com.eaglesakura.android.util.AndroidNetworkUtil;
 import com.eaglesakura.lambda.CallbackUtils;
 import com.eaglesakura.lambda.CancelCallback;
 import com.eaglesakura.thread.Holder;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 
 import java.io.IOException;
@@ -66,12 +69,49 @@ public class PlayServiceUtil {
     }
 
     /**
+     * キャンセルチェックとネットワークチェックを行ったうえで処理待ちを行う
+     */
+    public static <T extends Result> T awaitWithNetwork(Context context, PendingResult<T> task, CancelCallback cancelCallback) throws TaskCanceledException, NetworkNotConnectException {
+        // タスクの完了待ちを行う
+        Holder<T> holder = new Holder<>();
+        task.setResultCallback(result -> holder.set(result));
+
+        T item;
+        while ((item = holder.get()) == null) {
+            AndroidNetworkUtil.assertNetworkConnected(context);
+
+            if (CallbackUtils.isCanceled(cancelCallback)) {
+                task.cancel();
+                throw new TaskCanceledException();
+            }
+        }
+
+        return item;
+    }
+
+    /**
      * PlayService Taskの終了待ちを行う
      *
      * @throws TaskCanceledException タスクがキャンセルされた
      */
     public static <T> Task<T> await(Task<T> task, CancelCallback cancelCallback) throws TaskCanceledException {
         while (!task.isComplete()) {
+            if (CallbackUtils.isCanceled(cancelCallback)) {
+                throw new TaskCanceledException();
+            }
+        }
+        return task;
+    }
+
+    /**
+     * PlayService Taskの終了待ちを行う
+     *
+     * @throws TaskCanceledException タスクがキャンセルされた
+     */
+    public static <T> Task<T> awaitWithNetwork(Context context, Task<T> task, CancelCallback cancelCallback) throws TaskCanceledException, NetworkNotConnectException {
+        while (!task.isComplete()) {
+            AndroidNetworkUtil.assertNetworkConnected(context);
+
             if (CallbackUtils.isCanceled(cancelCallback)) {
                 throw new TaskCanceledException();
             }
