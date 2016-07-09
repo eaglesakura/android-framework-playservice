@@ -6,6 +6,7 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.tasks.Task;
@@ -18,6 +19,7 @@ import com.eaglesakura.android.util.AndroidNetworkUtil;
 import com.eaglesakura.lambda.CallbackUtils;
 import com.eaglesakura.lambda.CancelCallback;
 import com.eaglesakura.thread.Holder;
+import com.eaglesakura.util.Util;
 
 import android.accounts.Account;
 import android.annotation.SuppressLint;
@@ -90,9 +92,23 @@ public class PlayServiceUtil {
                 task.cancel();
                 throw new TaskCanceledException();
             }
+            Util.sleep(1);
         }
 
         return item;
+    }
+
+    public static <T extends Result> T await(OptionalPendingResult<T> task, CancelCallback cancelCallback) throws TaskCanceledException {
+        while (!CallbackUtils.isCanceled(cancelCallback)) {
+            if (task.isDone()) {
+                return task.get();
+            }
+            if (task.isCanceled()) {
+                throw new TaskCanceledException();
+            }
+            Util.sleep(1);
+        }
+        throw new TaskCanceledException();
     }
 
     /**

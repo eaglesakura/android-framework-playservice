@@ -59,4 +59,5 @@ public class PlayServiceConnectException extends PlayServiceException {
     public String getErrorMessage() {
         return mConnectionResult.getErrorMessage();
     }
+
 }

@@ -2,13 +2,13 @@ package com.eaglesakura.android.gms.client;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import com.eaglesakura.android.gms.error.DeveloperImplementFailedException;
 import com.eaglesakura.android.gms.error.PlayServiceConnectException;
 import com.eaglesakura.android.gms.error.PlayServiceException;
 import com.eaglesakura.android.gms.error.RequireRetryConnectException;
-import com.eaglesakura.android.gms.error.SignInRequireException;
 import com.eaglesakura.android.rx.error.TaskCanceledException;
 import com.eaglesakura.lambda.CallbackUtils;
 import com.eaglesakura.lambda.CancelCallback;
@@ -74,6 +74,18 @@ public class PlayServiceConnection implements Closeable {
     }
 
     /**
+     * 指定したAPIに接続が完了していたらtrue
+     */
+    public boolean isConnectionSuccess(Api<?>... api) {
+        for (Api item : api) {
+            if (!mClient.getConnectionResult(item).isSuccess()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * サインインが必要な状態である場合はtrue
      */
     public boolean isRequreSignIn() {
@@ -124,10 +136,6 @@ public class PlayServiceConnection implements Closeable {
     public GoogleApiClient getClientIfSuccess() throws PlayServiceException {
         try {
             if (mFailedResult != null) {
-                if (isRequreSignIn()) {
-                    throw new SignInRequireException(newSignInIntent());
-                }
-
                 if (isDeveloperError()) {
                     throw new DeveloperImplementFailedException(mFailedResult);
                 }
@@ -146,6 +154,7 @@ public class PlayServiceConnection implements Closeable {
         }
     }
 
+
     /**
      * APIに対して接続を行う
      *
@@ -154,10 +163,10 @@ public class PlayServiceConnection implements Closeable {
      * @return 接続済みの結果
      * @throws TaskCanceledException 接続中にキャンセルされた
      */
-    public static PlayServiceConnection newInstance(GoogleApiClient.Builder builder, CancelCallback cancelCallback) throws TaskCanceledException {
-        Holder<PlayServiceConnection> holder = new Holder<>();
+    public static PlayServiceConnection newInstance(GoogleApiClient.Builder builder, int connectMode, CancelCallback cancelCallback) throws TaskCanceledException {
+        final Holder<PlayServiceConnection> holder = new Holder<>();
 
-        GoogleApiClient.ConnectionCallbacks connectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
+        final GoogleApiClient.ConnectionCallbacks connectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
             @Override
             public void onConnected(@Nullable Bundle connectionHint) {
                 holder.set(new PlayServiceConnection(connectionHint));
@@ -168,16 +177,17 @@ public class PlayServiceConnection implements Closeable {
                 holder.set(new PlayServiceConnection(cause));
             }
         };
-        GoogleApiClient.OnConnectionFailedListener failedListener = result -> {
+        final GoogleApiClient.OnConnectionFailedListener failedListener = result -> {
             holder.set(new PlayServiceConnection(result));
         };
 
-        GoogleApiClient client = builder.build();
+        final GoogleApiClient client = builder.build();
         try {
             client.registerConnectionCallbacks(connectionCallbacks);
             client.registerConnectionFailedListener(failedListener);
 
-            client.connect();
+            // OptionによってはREQUIRE/OPTIONALを切り替えなければならない
+            client.connect(connectMode);
 
             PlayServiceConnection item;
             while ((item = holder.get()) == null) {
@@ -193,6 +203,22 @@ public class PlayServiceConnection implements Closeable {
         } finally {
             client.unregisterConnectionFailedListener(failedListener);
             client.unregisterConnectionCallbacks(connectionCallbacks);
+        }
+    }
+
+    /**
+     * APIに対して接続を行う
+     *
+     * @param builder        接続対象のAPI
+     * @param cancelCallback キャンセルチェック
+     * @return 接続済みの結果
+     * @throws TaskCanceledException 接続中にキャンセルされた
+     */
+    public static PlayServiceConnection newInstance(GoogleApiClient.Builder builder, CancelCallback cancelCallback) throws TaskCanceledException {
+        try {
+            return newInstance(builder, GoogleApiClient.SIGN_IN_MODE_REQUIRED, cancelCallback);
+        } catch (IllegalStateException e) {
+            return newInstance(builder, GoogleApiClient.SIGN_IN_MODE_OPTIONAL, cancelCallback);
         }
     }
 }
