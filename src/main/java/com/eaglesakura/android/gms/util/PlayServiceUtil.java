@@ -1,10 +1,7 @@
 package com.eaglesakura.android.gms.util;
 
-import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.PendingResult;
@@ -127,6 +124,8 @@ public class PlayServiceUtil {
                 task.cancel();
                 throw new TaskCanceledException();
             }
+
+            Util.sleep(1);
         }
 
         return item;
@@ -142,6 +141,8 @@ public class PlayServiceUtil {
             if (CallbackUtils.isCanceled(cancelCallback)) {
                 throw new TaskCanceledException();
             }
+
+            Util.sleep(1);
         }
         return task;
     }
@@ -158,6 +159,8 @@ public class PlayServiceUtil {
             if (CallbackUtils.isCanceled(cancelCallback)) {
                 throw new TaskCanceledException();
             }
+
+            Util.sleep(1);
         }
         return task;
     }
