@@ -191,9 +191,19 @@ public class PlayServiceUtil {
         }
     }
 
+    /**
+     * Google Play ServiceのインストールIntentを生成する
+     */
     public static Intent newGooglePlayServiceInstallIntent(Context context) {
+        return newGooglePlayInstallIntent(context, "com.google.android.gms");
+    }
+
+    /**
+     * GooglePlayでのインストールIntentを生成する
+     */
+    public static Intent newGooglePlayInstallIntent(@NonNull Context context, @NonNull String packageName) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("market://details?id=com.google.android.gms"));
+        intent.setData(Uri.parse("market://details?id=" + packageName));
         return intent;
     }
 
