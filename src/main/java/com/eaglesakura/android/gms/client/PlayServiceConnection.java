@@ -159,9 +159,12 @@ public class PlayServiceConnection implements Closeable {
      * APIに対して接続を行う
      *
      * @param builder        接続対象のAPI
+     * @param connectMode    接続モード
      * @param cancelCallback キャンセルチェック
      * @return 接続済みの結果
      * @throws TaskCanceledException 接続中にキャンセルされた
+     * @see GoogleApiClient#SIGN_IN_MODE_REQUIRED
+     * @see GoogleApiClient#SIGN_IN_MODE_OPTIONAL
      */
     public static PlayServiceConnection newInstance(GoogleApiClient.Builder builder, int connectMode, CancelCallback cancelCallback) throws TaskCanceledException {
         final Holder<PlayServiceConnection> holder = new Holder<>();
