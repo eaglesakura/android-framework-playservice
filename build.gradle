@@ -38,6 +38,7 @@ android {
     defaultConfig {
         minSdkVersion 15      // 現実的な対応ラインとしてAndroid 4.0.4とする
         targetSdkVersion 25
+        consumerProguardFiles 'proguard-rules.pro'
         // Device Test
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"    // JUnit4
     }
