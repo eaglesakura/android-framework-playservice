@@ -14,7 +14,6 @@ import com.eaglesakura.android.error.NetworkNotConnectException;
 import com.eaglesakura.android.gms.client.PlayServiceConnection;
 import com.eaglesakura.android.gms.error.PlayServiceException;
 import com.eaglesakura.android.gms.error.PlayServiceNotAvailableException;
-import com.eaglesakura.android.rx.error.TaskCanceledException;
 import com.eaglesakura.android.util.AndroidNetworkUtil;
 import com.eaglesakura.lambda.CallbackUtils;
 import com.eaglesakura.lambda.CancelCallback;
@@ -46,7 +45,7 @@ public class PlayServiceUtil {
      * @return ログイン用intent
      */
     @SuppressLint("NewApi")
-    public static Intent newSignInIntent(GoogleApiClient.Builder builder, CancelCallback cancelCallback) throws TaskCanceledException, PlayServiceException {
+    public static Intent newSignInIntent(GoogleApiClient.Builder builder, CancelCallback cancelCallback) throws InterruptedException, PlayServiceException {
         try (
                 PlayServiceConnection connection = PlayServiceConnection.newInstance(builder, cancelCallback)
         ) {
@@ -82,7 +81,7 @@ public class PlayServiceUtil {
     /**
      * キャンセルチェックを行ったうえで処理待ちを行う
      */
-    public static <T extends Result> T await(PendingResult<T> task, CancelCallback cancelCallback) throws TaskCanceledException {
+    public static <T extends Result> T await(PendingResult<T> task, CancelCallback cancelCallback) throws InterruptedException {
         // タスクの完了待ちを行う
         Holder<T> holder = new Holder<>();
         task.setResultCallback(result -> holder.set(result));
@@ -91,7 +90,7 @@ public class PlayServiceUtil {
         while ((item = holder.get()) == null) {
             if (CallbackUtils.isCanceled(cancelCallback)) {
                 task.cancel();
-                throw new TaskCanceledException();
+                throw new InterruptedException();
             }
             Util.sleep(1);
         }
@@ -99,23 +98,23 @@ public class PlayServiceUtil {
         return item;
     }
 
-    public static <T extends Result> T await(OptionalPendingResult<T> task, CancelCallback cancelCallback) throws TaskCanceledException {
+    public static <T extends Result> T await(OptionalPendingResult<T> task, CancelCallback cancelCallback) throws InterruptedException {
         while (!CallbackUtils.isCanceled(cancelCallback)) {
             if (task.isDone()) {
                 return task.get();
             }
             if (task.isCanceled()) {
-                throw new TaskCanceledException();
+                throw new InterruptedException();
             }
             Util.sleep(1);
         }
-        throw new TaskCanceledException();
+        throw new InterruptedException();
     }
 
     /**
      * キャンセルチェックとネットワークチェックを行ったうえで処理待ちを行う
      */
-    public static <T extends Result> T awaitWithNetwork(Context context, PendingResult<T> task, CancelCallback cancelCallback) throws TaskCanceledException, NetworkNotConnectException {
+    public static <T extends Result> T awaitWithNetwork(Context context, PendingResult<T> task, CancelCallback cancelCallback) throws InterruptedException, NetworkNotConnectException {
         // タスクの完了待ちを行う
         Holder<T> holder = new Holder<>();
         task.setResultCallback(result -> holder.set(result));
@@ -126,7 +125,7 @@ public class PlayServiceUtil {
 
             if (CallbackUtils.isCanceled(cancelCallback)) {
                 task.cancel();
-                throw new TaskCanceledException();
+                throw new InterruptedException();
             }
 
             Util.sleep(1);
@@ -140,10 +139,10 @@ public class PlayServiceUtil {
      *
      * @throws TaskCanceledException タスクがキャンセルされた
      */
-    public static <T> Task<T> await(Task<T> task, CancelCallback cancelCallback) throws TaskCanceledException {
+    public static <T> Task<T> await(Task<T> task, CancelCallback cancelCallback) throws InterruptedException {
         while (!task.isComplete()) {
             if (CallbackUtils.isCanceled(cancelCallback)) {
-                throw new TaskCanceledException();
+                throw new InterruptedException();
             }
 
             Util.sleep(1);
@@ -156,12 +155,12 @@ public class PlayServiceUtil {
      *
      * @throws TaskCanceledException タスクがキャンセルされた
      */
-    public static <T> Task<T> awaitWithNetwork(Context context, Task<T> task, CancelCallback cancelCallback) throws TaskCanceledException, NetworkNotConnectException {
+    public static <T> Task<T> awaitWithNetwork(Context context, Task<T> task, CancelCallback cancelCallback) throws InterruptedException, NetworkNotConnectException {
         while (!task.isComplete()) {
             AndroidNetworkUtil.assertNetworkConnected(context);
 
             if (CallbackUtils.isCanceled(cancelCallback)) {
-                throw new TaskCanceledException();
+                throw new InterruptedException();
             }
 
             Util.sleep(1);

@@ -9,7 +9,6 @@ import com.eaglesakura.android.gms.error.DeveloperImplementFailedException;
 import com.eaglesakura.android.gms.error.PlayServiceConnectException;
 import com.eaglesakura.android.gms.error.PlayServiceException;
 import com.eaglesakura.android.gms.error.RequireRetryConnectException;
-import com.eaglesakura.android.rx.error.TaskCanceledException;
 import com.eaglesakura.lambda.CallbackUtils;
 import com.eaglesakura.lambda.CancelCallback;
 import com.eaglesakura.thread.Holder;
@@ -162,11 +161,11 @@ public class PlayServiceConnection implements Closeable {
      * @param connectMode    接続モード
      * @param cancelCallback キャンセルチェック
      * @return 接続済みの結果
-     * @throws TaskCanceledException 接続中にキャンセルされた
+     * @throws InterruptedException 接続中にキャンセルされた
      * @see GoogleApiClient#SIGN_IN_MODE_REQUIRED
      * @see GoogleApiClient#SIGN_IN_MODE_OPTIONAL
      */
-    public static PlayServiceConnection newInstance(GoogleApiClient.Builder builder, int connectMode, CancelCallback cancelCallback) throws TaskCanceledException {
+    public static PlayServiceConnection newInstance(GoogleApiClient.Builder builder, int connectMode, CancelCallback cancelCallback) throws InterruptedException {
         final Holder<PlayServiceConnection> holder = new Holder<>();
 
         final GoogleApiClient.ConnectionCallbacks connectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
@@ -196,7 +195,7 @@ public class PlayServiceConnection implements Closeable {
             while ((item = holder.get()) == null) {
                 if (CallbackUtils.isCanceled(cancelCallback)) {
                     client.disconnect();
-                    throw new TaskCanceledException();
+                    throw new InterruptedException();
                 }
             }
 
@@ -215,9 +214,9 @@ public class PlayServiceConnection implements Closeable {
      * @param builder        接続対象のAPI
      * @param cancelCallback キャンセルチェック
      * @return 接続済みの結果
-     * @throws TaskCanceledException 接続中にキャンセルされた
+     * @throws InterruptedException 接続中にキャンセルされた
      */
-    public static PlayServiceConnection newInstance(GoogleApiClient.Builder builder, CancelCallback cancelCallback) throws TaskCanceledException {
+    public static PlayServiceConnection newInstance(GoogleApiClient.Builder builder, CancelCallback cancelCallback) throws InterruptedException {
         try {
             return newInstance(builder, GoogleApiClient.SIGN_IN_MODE_REQUIRED, cancelCallback);
         } catch (IllegalStateException e) {
