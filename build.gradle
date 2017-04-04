@@ -69,7 +69,7 @@ configurations {
 
 
 dependencies {
-    compile "com.android.support:support-annotations:25.3.0"
+    compile "com.android.support:support-annotations:25.3.1"
 
     if (EGLIBRARY_COMPILE_LOCAL) {
         compile project(':eglibrary:android-commons')
