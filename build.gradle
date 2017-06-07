@@ -19,7 +19,7 @@ buildscript {
         maven { url "https://maven.google.com" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-alpha1'
+        classpath 'com.android.tools.build:gradle:3.0.0-alpha3'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
     }
@@ -80,19 +80,19 @@ dependencies {
     } else {
         compile "com.eaglesakura:android-commons:2.2.11"
 
-        androidTestCompile "com.eaglesakura:android-devicetest-support:2.2.275"
-        testCompile "com.eaglesakura:android-unittest-support:1.5.211"
+        androidTestImplementation "com.eaglesakura:android-devicetest-support:2.2.275"
+        testImplementation "com.eaglesakura:android-unittest-support:1.5.211"
     }
 
     /**
      * Play Service
      */
-    compile "com.google.android.gms:play-services-auth:10.2.0"
+    implementation "com.google.android.gms:play-services-auth:10.2.0"
 
     /**
      * UnitTest用
      */
-    androidTestCompile "com.google.android.gms:play-services-location:10.2.0"
+    androidTestImplementation "com.google.android.gms:play-services-location:10.2.0"
 }
 
 task sourcesJar(type: Jar) {
