@@ -79,10 +79,10 @@ dependencies {
         androidTestImplementation project(":eglibrary:android-devicetest-support")
         testImplementation project(":eglibrary:android-unittest-support")
     } else {
-        compile "com.eaglesakura:android-commons:2.2.11"
+        compile "com.eaglesakura:android-commons:2.3.1"
 
-        androidTestImplementation "com.eaglesakura:android-devicetest-support:2.2.275"
-        testImplementation "com.eaglesakura:android-unittest-support:1.5.211"
+        androidTestImplementation "com.eaglesakura:android-devicetest-support:2.3.0"
+        testImplementation "com.eaglesakura:android-unittest-support:1.6.0"
     }
 
     /**
